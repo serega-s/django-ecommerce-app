@@ -1,0 +1,13 @@
+{% extends 'base/main.html' %}
+
+{% block title %}Home{% endblock %} 
+
+{% block content %}
+<h1>Latest Products</h1>
+<br>
+<div class="row gx-4 gx-lg-5 row-cols-md-3 row-cols-xl-4 justify-content-center">
+  {% for product in products %}
+    {% include 'base/parts/product_item.html' %}
+  {% endfor %}
+</div>
+{% endblock %}

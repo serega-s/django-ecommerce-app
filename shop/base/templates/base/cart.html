@@ -1,0 +1,164 @@
+{% extends 'base/main.html' %}
+{% load static %}
+
+{% block title  %} Cart ({{ cartItems }}){% endblock %}
+
+{% block content %}
+<style>
+  @media (min-width: 1025px) {
+    .h-custom {
+      height: 100vh !important;
+    }
+  }
+
+  .card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1rem;
+    line-height: 2.15;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+  }
+
+  .card-registration .select-arrow {
+    top: 13px;
+  }
+
+  .bg-grey {
+    background-color: #eae8e8;
+  }
+
+  @media (min-width: 992px) {
+    .card-registration-2 .bg-grey {
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .card-registration-2 .bg-grey {
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+  }
+</style>
+<div class="row d-flex justify-content-center align-items-center h-100">
+  <div class="col-12">
+    <div
+      class="card card-registration card-registration-2"
+      style="border-radius: 15px"
+    >
+      <div class="card-body p-0">
+        <div class="row g-0">
+          <div class="col-lg-8">
+            <div class="p-5">
+              <div
+                class="d-flex justify-content-between align-items-center mb-5"
+              >
+                <h1 class="fw-bold mb-0 text-black">Shopping Cart</h1>
+                <h6 class="mb-0 text-muted">{{ cartItems }} items</h6>
+              </div>
+              <hr class="my-4" />
+
+              {% for item in items %}
+              <div
+                class="
+                  row
+                  mb-4
+                  d-flex
+                  justify-content-between
+                  align-items-center
+                "
+              >
+                <div class="col-md-2 col-lg-2 col-xl-2">
+                  <img
+                    src="{{ item.product.image.url }}"
+                    class="img-fluid rounded-3"
+                  />
+                </div>
+                <div class="col-md-3 col-lg-3 col-xl-3">
+                  <h6 class="text-muted">{{ item.product.category.name }}</h6>
+                  <h6 class="text-black mb-0">{{ item.product.name }}</h6>
+                </div>
+                <div class="col-md-1 col-lg-1 col-xl-1 d-flex">
+                  <button
+                    class="btn btn-link px-1 update-cart"
+                    data-product="{{ item.product.id }}"
+                    data-action="remove"
+                    
+                  >
+                  <!-- onclick="this.parentNode.querySelector('input[type=number]').stepDown()" -->
+                    <i class="bi bi-dash"></i>
+                  </button>
+
+                  <!-- <input
+                    min="0"
+                    name="quantity"
+                    value="{{ item.quantity }}"
+                    type="number"
+                    data-product="{{ item.product.id }}"
+                    data-action="add || remove"
+                    class="form-control form-control-sm update-cart"
+                  /> -->
+                  <span class="mt-2">{{ item.quantity }}</span>
+
+                  <button
+                    class="btn btn-link px-1 update-cart"
+                    data-product="{{ item.product.id }}"
+                    data-action="add"
+                    
+                  >
+                  <!-- onclick="this.parentNode.querySelector('input[type=number]').stepUp()" -->
+                    <i class="bi bi-plus"></i>
+                  </button>
+                </div>
+                <div class="col-md-3 col-lg-3 col-xl-2 offset-lg-1">
+                  <h6 class="mb-0">${{ item.product.price|floatformat:2 }}</h6>
+                </div>
+                
+              </div>
+
+              <hr class="my-4" />
+              {% endfor %}
+              <div class="pt-5">
+                <h6 class="mb-0">
+                  <a href="{% url 'home' %}" class="btn btn-outline-dark">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to shop
+                  </a>
+                </h6>
+              </div>
+            </div>
+          </div>
+
+          <!-- ############# -->
+          <div class="col-lg-4 bg-grey">
+            <div class="p-5">
+              <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
+              <hr class="my-4" />
+
+              <div class="d-flex justify-content-between mb-4">
+                <h5 class="text-uppercase">items:</h5>
+                <h5>{{ cartItems }} pcs</h5>
+              </div>
+
+              <hr class="my-4" />
+
+              <div class="d-flex justify-content-between mb-5">
+                <h5 class="text-uppercase">Total:</h5>
+                <h5>${{ order.get_cart_total|floatformat:2 }}</h5>
+              </div>
+
+              <button
+                type="button"
+                class="btn btn-secondary btn-block btn-lg"
+                data-mdb-ripple-color="dark"
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
