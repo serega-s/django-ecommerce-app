@@ -1,5 +1,7 @@
 import json
-from .models import Product
+
+from .models import Customer, Order, Product
+
 
 def cookieCart(request):
     items = []
@@ -43,9 +45,14 @@ def cookieCart(request):
 
     return {'cartItems': cartItems, 'order': order, 'items': items}
 
+
 def cartData(request):
     if request.user.is_authenticated:
-        pass
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(
+            customer=customer, complete=False)
+        items = order.orderitems.all()
+        cartItems = order.get_items_total
 
     else:
         cookieData = cookieCart(request)
