@@ -31,14 +31,12 @@ def home(request):
 def cart(request):
     data = cartData(request)
 
-    # cartItems = data['cartItems']
     order = data['order']
     items = data['items']
 
     context = {
         'items': items,
         'order': order,
-        # 'cartItems': cartItems
     }
 
     return render(request, 'base/cart.html', context)
@@ -138,12 +136,10 @@ def edit_customer(request):
 def checkout(request):
     data = cartData(request)
 
-    # cartItems = data['cartItems']
     order = data['order']
     items = data['items']
 
     context = {
-        # 'cartItems': cartItems,
         'order': order,
         'items': items,
     }
