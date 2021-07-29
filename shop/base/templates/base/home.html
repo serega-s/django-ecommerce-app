@@ -1,13 +1,41 @@
 {% extends 'base/main.html' %}
-
+{% load widget_tweaks %}
 {% block title %}Home{% endblock %} 
 
 {% block content %}
-<h1>Latest Products</h1>
+<h2>Products Filter</h2>
+<div class="row">
+  <div class="col-lg-4">
+    <form method="GET" class="form">
+      <p>
+        <label for="category">Category</label>
+        {{ my_filter.form.category|add_class:"form-control" }}
+      </p>
+      <p>
+        <label for="name">Name</label>
+        {{ my_filter.form.name|add_class:"form-control"|attr:"placeholder:Name" }}
+      </p>
+      <p>
+        <label for="description">Description</label>
+        {{ my_filter.form.description|add_class:"form-control"|attr:"placeholder:Description" }}
+      </p>
+      <p>
+        <label for="price">Price Range</label>
+        {{ my_filter.form.price|add_class:"form-control"|attr:"placeholder:Price" }}
+      </p>
+
+      <button class="btn btn-success" type="submit">Search</button>
+    </form>
+  </div>
+</div>
+<br>
+<h1 class="text-center">Latest Products</h1>
 <br>
 <div class="row gx-4 gx-lg-5 row-cols-md-3 row-cols-xl-4 justify-content-center">
   {% for product in products %}
     {% include 'base/parts/product_item.html' %}
+  {% empty %}
+    <p class="text-center">No such products now...</p>
   {% endfor %}
 </div>
 {% endblock %}

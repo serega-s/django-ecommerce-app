@@ -5,12 +5,6 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-      crossorigin="anonymous"
-    /> -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
       rel="stylesheet"
@@ -56,7 +50,6 @@
           }
         }
 
-        // Return null if not found
         return null
       }
       let cart = JSON.parse(getCookie("cart"))
@@ -72,7 +65,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="{% url 'home' %}">Start Bootstrap</a>
+        <a class="navbar-brand" href="{% url 'home' %}">SHOP</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -118,25 +111,53 @@
                 <li>
                   <a
                     class="dropdown-item"
-                    href="{% url 'home' %}?category={{ category.name }}"
+                    href="{% url 'home' %}?category={{ category.id }}"
                     >{{ category.name }}</a
                   >
                 </li>
                 {% endfor %}
               </ul>
             </li>
+            <li></li>
           </ul>
+          <form class="d-flex me-4" action="{% url 'home' %}">
+            <input
+              class="form-control me-2"
+              name="name"
+              value="{% if my_filter.form.name.value %}{{ my_filter.form.name.value }}{% endif %}"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+          <br />
           <div class="d-flex">
             <a class="btn btn-outline-dark btn-block" href="{% url 'cart' %}">
               <i class="bi-cart-fill me-1"></i>
               Cart
-              <span class="badge bg-dark text-white ms-1 rounded-pill">{{ cartItems }}</span>
+              <span class="badge bg-warning text-white ms-1 rounded-pill"
+                >{{ cartItems }}</span
+              >
             </a>
+            {% if request.user.is_authenticated %}
+              <a class="btn btn-info btn-block ms-4" href="{% url 'profile' %}">
+                <i class="bi bi-person-fill"></i>
+                Profile
+              </a>
+            {% else %}
+              <a class="btn btn-success btn-block ms-4" href="{% url 'login_customer' %}">
+                <i class="bi bi-lock-fill"></i>
+                Login
+              </a>
+            {% endif %}
           </div>
         </div>
       </div>
     </nav>
-    <header class="bg-dark py-5">
+    <header class="bg-dark py-4">
       <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
           <h1 class="display-4 fw-bolder">Welcome</h1>
@@ -144,12 +165,12 @@
         </div>
       </div>
     </header>
-    <section class="py-5">
+    <section class="py-2">
       <div class="container px-4 px-lg-5 my-5">
         {% block content %} {% endblock %}
       </div>
     </section>
-    <footer class="py-5 bg-dark">
+    <footer class="py-4 bg-dark">
       <div class="container">
         <p class="m-0 text-center text-white">Copyright &copy; Shop 2021</p>
       </div>

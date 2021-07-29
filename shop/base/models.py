@@ -1,8 +1,12 @@
+from django.utils.text import slugify
+from django.db import models
+from django.contrib.auth.models import User
+import math
 import uuid
 
-from django.contrib.auth.models import User
-from django.db import models
-from django.utils.text import slugify
+
+import math
+
 
 '''
 1.Registration (email, name & password) - Selecting some product - Adding to Cart - Checkout - Order(no email & name)
@@ -50,17 +54,28 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ForeignKey(
-        Category, blank=False, null=True, on_delete=models.SET_NULL)
+        Category, blank=False, null=True, on_delete=models.SET_NULL, related_name='products')
     name = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(default='placeholder.jpg', blank=True, null=True)
     price = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     slug = models.SlugField(blank=True, null=True)
-
     description = models.TextField(blank=True, null=True)
     countInStock = models.IntegerField(default=0, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True,
                           primary_key=True, editable=False)
+
+    @property
+    def get_avg_rating(self):
+        reviews = Review.objects.filter(product=self)
+        count = len(reviews)
+        summary = 0
+        try:
+            for rvw in reviews:
+                summary += rvw.rating
+            return (int(summary/count))
+        except ZeroDivisionError:
+            return 0
 
     def __str__(self):
         return self.name
@@ -81,10 +96,31 @@ class Product(models.Model):
             self.slug = slug
         super().save(*args, **kwargs)
 
+    @property
+    def is_available(self):
+        if self.countInStock > 0:
+            return True
+        return False
+
+
+class Review(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='reviews')
+    customer = models.ForeignKey(
+        Customer, on_delete=models.SET_NULL, blank=False, null=True)
+    rating = models.IntegerField(default=1)
+    comment = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    id = models.UUIDField(default=uuid.uuid4, unique=True,
+                          primary_key=True, editable=False)
+
+    def __str__(self):
+        return str(self.rating)
+
 
 class Order(models.Model):
     customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, blank=True, null=True)
+        Customer, on_delete=models.SET_NULL, blank=True, null=True, related_name='orders')
     date_ordered = models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=255, blank=False, null=True)
@@ -127,7 +163,7 @@ class OrderItem(models.Model):
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(
-        Customer, on_delete=models.SET_NULL, null=True)
+        Customer, on_delete=models.SET_NULL, null=True, related_name='shipping_addresses')
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)

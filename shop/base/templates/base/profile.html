@@ -1,0 +1,66 @@
+{% extends 'base/main.html' %}
+{% load humanize %}
+
+{% block title %}Profile{% endblock %} 
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h2>{{ customer.name }}</h2>
+
+    <strong>Your Name:</strong> {{ customer.name }}
+    <br />
+    <strong>Your Email:</strong> {{ customer.email }}
+  </div>
+  <div class="col-lg-4">
+    <br>
+    <div class="card">
+      <h5 class="mx-auto mt-1">Menu</h5>
+      <hr />
+      <div class="d-flex justify-content-center ps-2 pe-2">
+        <a
+          class="btn btn-dark ps-1 my-1 me-auto"
+          title="Edit Your Information"
+          href="{% url 'edit_customer' %}"
+          ><i class="bi bi-pencil"></i> Edit Info</a
+        >
+        <a
+          class="btn btn-outline-warning ps-1 ms-auto my-1"
+          title="Logout from Account"
+          href="{% url 'logout_customer' %}"
+          ><i class="bi bi-door-open"></i>Logout</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-12 m-0 p-0">
+    <br />
+    <h2 class="text-center">Your orders</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Quantity</th>
+          <th>Complete</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          {% for item in order.orderitems.all %}
+            <tr>
+              <td>#</td>
+              <td><a href="{% url 'product' item.product.category.slug item.product.slug %}" class="text-dark">{{ item.product.name }}</a></td>
+              <td>{{ item.quantity }}pcs</td>
+              <td>{{ item.order.complete|yesno:"Yes,No" }}</td>
+              <td>{{ item.date_added|naturalday }}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

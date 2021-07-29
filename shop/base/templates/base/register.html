@@ -1,7 +1,64 @@
 {% extends 'base/main.html' %}
+{% load widget_tweaks %}
 
-{% block title %}{% endblock %}
+{% block title %}Register{% endblock %}
 
 {% block content %}
 
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <p class="box-element">
+      <h1 class="title">Registration</h1>
+      <form method="POST">
+        {% csrf_token %}
+        <p>
+          <label for="username">Full Name</label>
+          {{ form.first_name|add_class:"form-control"|attr:"placeholder:Full Name"|attr:"autofocus" }}
+          {% for error in form.first_name.errors %}
+            <ul class="list-group">
+              <li class="list-group-item">*{{ error }}</li>
+            </ul>
+          {% endfor %}
+        </p>
+        <p>
+          <label for="email">Email</label>
+          {{ form.username|add_class:"form-control"|attr:"placeholder:Email"|attr:"type:email" }}
+          {% for error in form.username.errors %}
+            <ul class="list-group">
+              <li class="list-group-item">*{{ error }}</li>
+            </ul>
+          {% endfor %}
+        </p>
+        <p >
+          <label for="password1">Password</label>
+          {{ form.password1|add_class:"form-control"|attr:"placeholder:Password" }}
+          {% for error in form.password1.errors %}
+            <ul class="list-group">
+              <li class="list-group-item">*{{ error }}</li>
+            </ul>
+          {% endfor %}
+        </p>
+        <p>
+          <label for="password2">Repeat Password</label>
+          {{ form.password2|add_class:"form-control"|attr:"placeholder:Repeat Password" }}
+          {% for error in form.password2.errors %}
+            <ul class="list-group">
+              <li class="list-group-item list-group-item-warning">*{{ error }}</li>
+            </ul>
+          {% endfor %}
+        </p>
+        <hr />
+        <p>
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-success mx-auto">
+              Submit
+            </button>
+          </div>
+          <hr />
+          <p>Have an Account?&nbsp;<a href="{% url 'login_customer' %}">Log in</a></p>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

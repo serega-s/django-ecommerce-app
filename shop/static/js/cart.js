@@ -1,20 +1,24 @@
 const updateBtns = document.getElementsByClassName("update-cart")
+const inputQuantity = document.querySelector("#inputQuantity")
 
 for (let i = 0; i < updateBtns.length; i++) {
   updateBtns[i].addEventListener("click", function (e) {
     const productId = this.dataset.product
     const action = this.dataset.action
 
+    let quantity = 0
+    inputQuantity ? (quantity = parseInt(inputQuantity.value)) : (quantity = 1)
+
     console.log("productId:", productId, "Action:", action)
     console.log("USER:", user)
 
     user === "AnonymousUser"
-      ? addCookieItem(productId, action)
-      : updateUserOrder(productId, action)
+      ? addCookieItem(productId, action, quantity)
+      : updateUserOrder(productId, action, quantity)
   })
 }
 
-function updateUserOrder(productId, action) {
+function updateUserOrder(productId, action, quantity) {
   console.log("User is authenticated. Sending data...")
 
   const url = "/update_item/"
@@ -25,7 +29,11 @@ function updateUserOrder(productId, action) {
       "Content-Type": "application/json",
       "X-CSRFToken": csrftoken,
     },
-    body: JSON.stringify({ productId: productId, action: action }),
+    body: JSON.stringify({
+      productId: productId,
+      action: action,
+      quantity: quantity
+    }),
   })
     .then((response) => {
       return response.json()
@@ -38,14 +46,11 @@ function updateUserOrder(productId, action) {
     })
 }
 
-function addCookieItem(productId, action) {
-  const inputQuantity = document.querySelector("#inputQuantity")
-  let value = 0
-  inputQuantity ? (value = parseInt(inputQuantity.value)) : (value = 1)
+function addCookieItem(productId, action, quantity) {
 
   if (action == "add") {
     if (cart[productId] == undefined) {
-      cart[productId] = { quantity: value }
+      cart[productId] = { quantity: quantity }
     } else {
       inputQuantity
         ? (cart[productId]["quantity"] += parseInt(inputQuantity.value))

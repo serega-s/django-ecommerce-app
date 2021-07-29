@@ -1,9 +1,16 @@
 {% extends 'base/main.html' %}
+{% load humanize %}
 
 {% block title %}{{ product.name }}{% endblock %}
 
 
 {% block content %}
+<div class="row">
+  <div class="col-md-2">
+    <a href="{% url 'home' %}" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Back</a>
+  </div>
+</div>
+<br>
 <div class="row gx-4 gx-lg-5 align-items-center">
   <div class="col-md-6">
     <img
@@ -13,31 +20,40 @@
     />
   </div>
   <div class="col-md-6">
-    <div class="small mb-1">SKU: BST-498</div>
-    <h1 class="display-5 fw-bolder">{{ product.name }}</h1>
+    <div class="small mb-1 text-uppercase">{{ product.category }}</div>
+    <h1 class="display-6 fw-bolder">{{ product.name }}</h1>
+    <div class="rating text-warning" style="display: flex;">
+      {% include 'base/parts/avg_rating.html' %}
+    </div>
     <div class="fs-5 mb-5">
-      <span>${{ product.price }}</span>
+      <h4>${{ product.price }}</h4>
     </div>
     <p class="lead">{{ product.description }}</p>
-    <div class="d-flex">
-      <input
-        class="form-control text-center me-3"
-        id="inputQuantity"
-        type="num"
-        value="1"
-        name="quantity"
-        style="max-width: 3rem"
-      />
-      <button
-        class="btn btn-outline-dark flex-shrink-0 update-cart"
-        type="button"
-        data-product="{{ product.id }}"
-        data-action="add"
-      >
-        <i class="bi-cart-fill me-1"></i>
-        Add to cart
-      </button>
-    </div>
+    {% if product.is_available %}
+      <div class="d-flex">
+        <input
+          class="form-control text-center me-3"
+          id="inputQuantity"
+          type="num"
+          value="1"
+          name="quantity"
+          style="max-width: 3rem"
+        />
+        <button
+          class="btn btn-outline-dark flex-shrink-0 update-cart"
+          type="button"
+          data-product="{{ product.id }}"
+          data-action="add"
+        >
+          <i class="bi-cart-fill me-1"></i>
+          Add to cart
+        </button>
+      </div>
+    {% else %}
+      <div class="d-flex">
+        <div class="alert alert-danger">Currently Not In Stock</div>
+      </div>
+    {% endif %}
   </div>
 </div>
 
@@ -56,7 +72,109 @@
     {% for product in related_products %} 
       {% include 'base/parts/product_item.html' %}
     {% endfor %}
+  {% else %}
+    <p>No related products...</p>
   {% endif %}
 </div>
+<div class="row">
+  <div class="col-md-6">
+    <h4 class="text-uppercase">Reviews ({{ product.reviews.count }})</h4>
 
+    <div class="list-group list-group-flush">
+      <div class="list-group-item">
+        <div class="list-group-item">
+          <h4 class="uppercase">Leave a review</h4>
+          <form id="comment_form" method="POST">
+            <div class="form-group">
+              <label class="form-label" for="rating">Rating</label
+              ><select required name="rating" class="form-control"
+                ><option selected value="null">Select...</option
+                ><option value="1">1 - Poor</option
+                ><option value="2">2 - Fair</option
+                ><option value="3">3 - Good</option
+                ><option value="4">4 - Very Good</option
+                ><option value="5">5 - Excellent</option></select
+              >
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="comment">Review</label
+              ><textarea
+                class="form-control"
+                name="comment"
+                placeholder="Review"
+                style="height: 100px;"
+              ></textarea>
+            </div>
+            <br />
+            <button class="btn btn-success" type="submit">
+              Submit
+            </button>
+        </form>
+        </div>
+      </div>
+      {% for review in reviews.all %}
+      <div
+        class="list-group-item"
+      >
+        <strong>
+          {{ review.customer.name }}
+        </strong>
+        <div class="rating text-warning" style="display: flex;">
+          {% include 'base/parts/rvw_rating.html' %}
+        </div>
+        <p>{{ review.created_at|naturaltime }}</p>
+        <p>{{ review.comment }}</p>
+      </div>
+      {% empty %}
+        <p class="text-center">No reviews</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  const form = document.getElementById('comment_form')
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault()
+
+    console.log('Review was added')
+    addComment()
+  })
+
+  function addComment() {
+    const url = '/add_comment/'
+
+    let reviewData = {
+      rating: null,
+      comment: null,
+      product: '{{ product.id }}',
+    }
+
+    reviewData.rating = form.rating.value
+    reviewData.comment = form.comment.value
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken
+      },
+      body: JSON.stringify({data: reviewData})
+    })
+    .then((response) => {
+        response.json()    
+      })
+    .then((data) => {
+      console.log("SUCCESS", data)
+      form.rating.value = null
+      form.comment.value = ''
+      location.reload()
+    })
+    .catch(error => {
+      console.log(error.response)
+      
+    })
+  }
+</script>
 {% endblock %}

@@ -69,14 +69,16 @@
                 "
               >
                 <div class="col-md-2 col-lg-2 col-xl-2">
-                  <img
-                    src="{{ item.product.image.url }}"
-                    class="img-fluid rounded-3"
-                  />
+                  <a style="text-decoration: none; color: black;" href="{% url 'product' item.product.category.slug item.product.slug %}">
+                    <img
+                      src="{{ item.product.image.url }}"
+                      class="img-fluid rounded-3"
+                    />
+                  </a>
                 </div>
                 <div class="col-md-3 col-lg-3 col-xl-3">
                   <h6 class="text-muted">{{ item.product.category.name }}</h6>
-                  <h6 class="text-black mb-0">{{ item.product.name }}</h6>
+                  <h6 class="mb-0"><a style="text-decoration: none; color: black;" href="{% url 'product' item.product.category.slug item.product.slug %}">{{ item.product.name }}</a></h6>
                 </div>
                 <div class="col-md-1 col-lg-1 col-xl-1 d-flex">
                   <button
@@ -85,19 +87,9 @@
                     data-action="remove"
                     
                   >
-                  <!-- onclick="this.parentNode.querySelector('input[type=number]').stepDown()" -->
                     <i class="bi bi-dash"></i>
                   </button>
 
-                  <!-- <input
-                    min="0"
-                    name="quantity"
-                    value="{{ item.quantity }}"
-                    type="number"
-                    data-product="{{ item.product.id }}"
-                    data-action="add || remove"
-                    class="form-control form-control-sm update-cart"
-                  /> -->
                   <span class="mt-2">{{ item.quantity }}</span>
 
                   <button
@@ -106,7 +98,6 @@
                     data-action="add"
                     
                   >
-                  <!-- onclick="this.parentNode.querySelector('input[type=number]').stepUp()" -->
                     <i class="bi bi-plus"></i>
                   </button>
                 </div>
@@ -117,6 +108,8 @@
               </div>
 
               <hr class="my-4" />
+              {% empty %}
+                <p class="alert alert-success">No products in cart</p>
               {% endfor %}
               <div class="pt-5">
                 <h6 class="mb-0">
@@ -146,14 +139,24 @@
                 <h5 class="text-uppercase">Total:</h5>
                 <h5>${{ order.get_cart_total|floatformat:2 }}</h5>
               </div>
-
-              <button
-                type="button"
-                class="btn btn-secondary btn-block btn-lg"
-                data-mdb-ripple-color="dark"
-              >
-                Checkout
-              </button>
+              {% if cartItems %}
+                <a
+                  type="button"
+                  href="{% url 'checkout' %}"
+                  class="btn btn-secondary btn-block btn-lg"
+                  data-mdb-ripple-color="dark"
+                >
+                  Checkout
+                </a>
+              {% else %}
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-block btn-lg disabled"
+                  data-mdb-ripple-color="dark"
+                >
+                  Checkout
+                </button>
+              {% endif %}
             </div>
           </div>
         </div>

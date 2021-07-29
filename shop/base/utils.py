@@ -1,6 +1,6 @@
 import json
 
-from .models import Customer, Order, Product
+from .models import Customer, Order, OrderItem, Product
 
 
 def cookieCart(request):
@@ -33,7 +33,8 @@ def cookieCart(request):
                     'name': product.name,
                     'price': product.price,
                     'category': product.category,
-                    'image': product.image
+                    'image': product.image,
+                    'slug': product.slug
                 },
                 'quantity': cart[i]['quantity'],
                 'get_total': total
@@ -44,7 +45,6 @@ def cookieCart(request):
             pass
 
     return {'cartItems': cartItems, 'order': order, 'items': items}
-
 
 def cartData(request):
     if request.user.is_authenticated:
@@ -61,3 +61,44 @@ def cartData(request):
         items = cookieData['items']
 
     return {'cartItems': cartItems, 'order': order, 'items': items}
+
+def guestOrder(request, data):
+    print('User is not  logged in!')
+
+    print('COOKIES:', request.COOKIES)
+    name = data['form']['name']
+    email = data['form']['email']
+
+    print('NAME:', name, 'EMAIL:', email)
+
+    cookieData = cookieCart(request)
+    items = cookieData['items']
+
+    customer, created = Customer.objects.get_or_create(
+        email=email
+    )
+
+    customer.name = name
+    customer.save()
+
+    order = Order.objects.create(
+        customer=customer,
+        complete=False
+    )
+
+    for item in items:
+        product = Product.objects.get(id=item['product']['id'])
+        orderItem = OrderItem.objects.create(
+            product=product,
+            order=order,
+            quantity=item['quantity']
+        )
+
+        product.countInStock -= item['quantity']
+        if product.countInStock <= 0:
+            product.countInStock = 0
+
+        product.save()
+    return customer, order
+
+

@@ -1,7 +1,47 @@
 {% extends 'base/main.html' %}
+{% load widget_tweaks %}
 
-{% block title %}{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block content %}
-
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="box-element">
+      <h1 class="title">Log in</h1>
+      <form method="POST">
+        {% csrf_token %}
+        <p>
+          <label for="username">Email</label>
+          {{ form.username|add_class:"form-control"|attr:"placeholder:Email"|attr:"autofocus"|attr:"type:email" }}
+          {% for error in form.username.errors %}
+            <ul class="list-group">
+              <li class="list-group-item">*{{ error }}</li>
+            </ul>
+          {% endfor %}
+        </p>
+        <p>
+          <label for="password">Password</label>
+          {{ form.password|add_class:"form-control"|attr:"placeholder:Password" }}
+          {% for error in form.password.errors %}
+            <ul class="list-group">
+              <li class="list-group-item">*{{ error }}</li>
+            </ul>
+          {% endfor %}
+        </p>
+        <hr />
+        <p>
+          <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-success">Submit</button>
+          </div>
+          <hr />
+          <p>
+            Don't Have an Account?&nbsp;<a href="{% url 'register_customer' %}"
+              >Sign up</a
+            >
+          </p>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

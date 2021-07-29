@@ -1,0 +1,33 @@
+{% if product.get_avg_rating == 0 %}
+  <i class="bi-star"></i>
+  <i class="bi-star"></i>
+  <i class="bi-star"></i>
+  <i class="bi-star"></i>
+  <i class="bi-star"></i>
+{% endif %}
+
+{% if product.get_avg_rating == 1 %}
+  <i class="bi-star-fill" ></i>
+{% endif %}
+{% if product.get_avg_rating == 2 %}
+  <div class="bi-star-fill"></div>
+  <div class="bi-star-fill"></div>
+{% endif %}
+{% if product.get_avg_rating == 3 %}
+  <div class="bi-star-fill"></div>
+  <div class="bi-star-fill"></div>
+  <div class="bi-star-fill"></div>
+{% endif %}
+{% if product.get_avg_rating == 4 %}
+  <div class="bi-star-fill"></div>
+  <div class="bi-star-fill"></div>
+  <div class="bi-star-fill"></div>
+  <div class="bi-star-fill"></div>
+{% endif %}
+{% if product.get_avg_rating == 5 %}
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+{% endif %}

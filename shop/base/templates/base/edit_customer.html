@@ -1,0 +1,47 @@
+{% extends 'base/main.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Profile{% endblock %} 
+
+{% block content %}
+<div class="row">
+  <div class="col-md-2">
+    <a href="{% url 'profile' %}" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Back</a>
+  </div>
+</div>
+<br>
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <h1>Edit information</h1>
+    <form method="POST">
+      {% csrf_token %}
+      <p>
+        <label for="name">Full Name</label>
+        {{ form.name|add_class:"form-control"|attr:"placeholder:Full name" }}
+        {% for error in form.name.errors %}
+          <ul class="list-group">
+            <li class="list-group-item">*{{ error }}</li>
+          </ul>
+        {% endfor %}
+      </p>
+      <p>
+        <label for="email">Email</label>
+        {{ form.email|add_class:"form-control"|attr:"placeholder:Email"|attr:"type:email" }}
+        {% for error in form.name.errors %}
+          <ul class="list-group">
+            <li class="list-group-item">*{{ error }}</li>
+          </ul>
+        {% endfor %}
+      </p>
+      <hr />
+      <p>
+        
+        <button type="submit" class="btn btn-success mx-auto justify-content-center d-flex">
+          Submit
+        </button>
+      </p>
+    </form>
+    <br>
+  </div>
+</div>
+{% endblock %}

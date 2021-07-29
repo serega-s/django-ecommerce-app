@@ -1,0 +1,22 @@
+{% if review.rating == 1 %}
+  <i class="bi-star-fill" ></i>
+
+{% elif review.rating == 2 %}
+  <i class="bi-star-fill"></i>
+  <div class="bi-star-fill"></div>
+{% elif review.rating == 3 %}
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+{% elif review.rating == 4 %}
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+{% elif review.rating == 5 %}
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+  <i class="bi-star-fill"></i>
+{% endif %}
