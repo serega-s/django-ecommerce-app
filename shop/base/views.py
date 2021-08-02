@@ -112,7 +112,6 @@ def edit_customer(request):
             username = form.cleaned_data['email']
             full_name = form.cleaned_data['name']
 
-
             customer.user.username = username
             customer.user.save()
 
