@@ -142,7 +142,6 @@ class Order(models.Model):
     def __str__(self):
         return self.customer.name
 
-
 class OrderItem(models.Model):
     order = models.ForeignKey(
         Order, on_delete=models.SET_NULL, null=True, related_name='orderitems')

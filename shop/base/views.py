@@ -19,7 +19,7 @@ def home(request):
     my_filter = ProductFilter(request.GET, queryset=products)
 
     products = my_filter.qs
-    
+
     context = {
         'products': products,
         'my_filter': my_filter
@@ -100,6 +100,7 @@ def login_customer(request):
 
     return render(request, 'base/login.html', context)
 
+
 @login_required
 def edit_customer(request):
     customer = request.user.customer
@@ -108,7 +109,6 @@ def edit_customer(request):
         form = EditCustomerForm(request.POST, instance=customer)
 
         if form.is_valid():
-        
             username = form.cleaned_data['email']
             full_name = form.cleaned_data['name']
 
@@ -129,8 +129,9 @@ def edit_customer(request):
         'customer': customer,
         'form': form
     }
-    
+
     return render(request, 'base/edit_customer.html', context)
+
 
 def checkout(request):
     data = cartData(request)
@@ -152,6 +153,7 @@ def logout_customer(request):
 
     return redirect('login_customer')
 
+
 @login_required
 def profile(request):
     customer = request.user.customer
@@ -161,7 +163,7 @@ def profile(request):
         'customer': customer,
         'orders': orders
     }
-    
+
     return render(request, 'base/profile.html', context)
 
 
@@ -176,7 +178,7 @@ def update_item(request):
     print(f'productId: {productId}, action: {action}')
 
     customer = request.user.customer
-    
+
     product = Product.objects.get(id=productId)
     order, created = Order.objects.get_or_create(
         customer=customer, complete=False)
@@ -237,7 +239,7 @@ def process_order(request):
     return JsonResponse('Payment submitted...', safe=False)
 
 
-def add_comment(request): 
+def add_comment(request):
     data = json.loads(request.body)
     print('DATA:', data)
 
@@ -248,4 +250,4 @@ def add_comment(request):
         comment=data['data']['comment']
     )
 
-    return JsonResponse('Comment was added',safe=False)
+    return JsonResponse('Comment was added', safe=False)
