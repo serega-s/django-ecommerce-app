@@ -52,7 +52,7 @@ def cartData(request):
         order, created = Order.objects.get_or_create(
             customer=customer, complete=False)
         items = order.orderitems.all()
-        cartItems = order.get_items_total
+        cartItems = order.get_cart_items#get_items_total 
 
     else:
         cookieData = cookieCart(request)

@@ -1,12 +1,8 @@
-from django.utils.text import slugify
-from django.db import models
-from django.contrib.auth.models import User
-import math
 import uuid
 
-
-import math
-
+from django.contrib.auth.models import User
+from django.db import models
+from django.utils.text import slugify
 
 '''
 1.Registration (email, name & password) - Selecting some product - Adding to Cart - Checkout - Order(no email & name)
@@ -23,6 +19,10 @@ class Customer(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+
+User.customer = property(
+    lambda u: Customer.objects.get_or_create(user=u, email=u.username)[0])
 
 
 class Category(models.Model):
@@ -102,6 +102,9 @@ class Product(models.Model):
             return True
         return False
 
+    class Meta:
+        ordering = ['-created_at']
+
 
 class Review(models.Model):
     product = models.ForeignKey(
@@ -115,7 +118,7 @@ class Review(models.Model):
                           primary_key=True, editable=False)
 
     def __str__(self):
-        return str(self.rating)
+        return f'{self.rating}, {self.product.name}'
 
 
 class Order(models.Model):
@@ -134,13 +137,17 @@ class Order(models.Model):
         return total
 
     @property
-    def get_items_total(self):
+    def get_cart_items(self):
         orderitems = self.orderitems.all()
         total = sum([item.quantity for item in orderitems])
         return total
 
     def __str__(self):
-        return self.customer.name
+        return str(self.customer.name)
+
+    class Meta:
+        ordering = ['-date_ordered']
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(
@@ -159,6 +166,9 @@ class OrderItem(models.Model):
     def __str__(self):
         return self.product.name
 
+    class Meta:
+        ordering = ['-date_added']
+
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(
@@ -168,8 +178,12 @@ class ShippingAddress(models.Model):
     city = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=255, blank=True, null=True)
     postal_code = models.CharField(max_length=255, blank=True, null=True)
+    date_added = models.DateTimeField(auto_now_add=True)
     id = models.UUIDField(default=uuid.uuid4, unique=True,
                           primary_key=True, editable=False)
 
     def __str__(self):
         return str(self.address)
+
+    class Meta:
+        ordering = ['-date_added']
